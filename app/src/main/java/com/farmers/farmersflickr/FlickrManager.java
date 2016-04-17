@@ -1,16 +1,5 @@
 package com.farmers.farmersflickr;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,10 +8,21 @@ import android.util.Log;
 
 import com.farmers.farmersflickr.MainActivity.UIHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
 public class FlickrManager {
 
 	// String to create Flickr API urls
-	private static final String FLICKR_BASE_URL = "http://api.flickr.com/services/rest/?method=";
+	private static final String FLICKR_BASE_URL = "https://api.flickr.com/services/rest/?method=";
 	private static final String FLICKR_PHOTOS_SEARCH_STRING = "flickr.photos.search";
 	private static final String FLICKR_GET_SIZES_STRING = "flickr.photos.getSizes";
 	private static final int FLICKR_PHOTOS_SEARCH_ID = 1;
@@ -141,7 +141,9 @@ public class FlickrManager {
 
 	public static ArrayList<ImageContener> searchImagesByTag(UIHandler uih, Context ctx, String tag) {
 		uihandler = uih;
+		Log.d("searchImagesByTag", "Tag: " + tag);
 		String url = createURL(FLICKR_PHOTOS_SEARCH_ID, tag);
+		Log.d("searchImagesByTag", "url: " + url);
 		ArrayList<ImageContener> tmp = new ArrayList<ImageContener>();
 		String jsonString = null;
 		try {
