@@ -2,7 +2,6 @@ package com.farmers.farmersflickr;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
@@ -12,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.farmers.farmersflickr.FlickrManager.GetThumbnailsThread;
 import com.origamilabs.library.views.StaggeredGridView;
@@ -45,6 +42,7 @@ public class MainActivity extends Activity {
 	private StaggeredGridView gridView;
 
     private static final int REQUEST_WRITE_STORAGE = 112;
+    private static final String STATE_IMAGES = "images";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +58,7 @@ public class MainActivity extends Activity {
 //		imgView = (ImageView) findViewById(R.id.imageView1);
         gridView = (StaggeredGridView) findViewById(R.id.staggeredGridView);
 
-		// Click on thumbnail
-//		gallery.setOnItemClickListener(onThumbClickListener);
-		// Click on search
-		downloadPhotos.setOnClickListener(onSearchButtonListener);
+        downloadPhotos.setOnClickListener(onSearchButtonListener);
 
         boolean hasPermission = (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -73,28 +68,49 @@ public class MainActivity extends Activity {
                     REQUEST_WRITE_STORAGE);
         }
 
-		// Get prevoiusly downloaded list after orientation change
-		imageList = (ArrayList<ImageContener>) getLastNonConfigurationInstance();
-		if (imageList != null) {
-			imgAdapter = new ImageAdapter(getApplicationContext(), imageList);
-			ArrayList<ImageContener> ic = imgAdapter.getImageContener();
-//			gallery.setAdapter(imgAdapter);
-			imgAdapter.notifyDataSetChanged();
-			int lastImage = -1;
-			if (savedInstanceState.containsKey(LAST_IMAGE)) {
-				lastImage = savedInstanceState.getInt(LAST_IMAGE);
-			}
-			if (lastImage >= 0 && ic.size() >= lastImage) {
-//				gallery.setSelection(lastImage);
-				Bitmap photo = ic.get(lastImage).getPhoto();
-				if (photo == null) {
-                    new GetLargePhotoThread(ic.get(lastImage), uihandler).start();
-                } else {
-//					imgView.setImageBitmap(ic.get(lastImage).photo);
-                }
-			}
-		}
+        if (savedInstanceState != null) {
+            imageList = (ArrayList<ImageContener>) savedInstanceState.getSerializable(STATE_IMAGES);
+            imgAdapter = new ImageAdapter(getApplicationContext(), imageList);
 
+            String urls[] = new String[imageList.size()];
+
+            for (int i = 0; i < imageList.size(); ++i) {
+                urls[i] = imageList.get(i).getThumbURL();
+            }
+
+            StaggeredAdapter adapter = new StaggeredAdapter(MainActivity.this, R.id.imageView, urls);
+            gridView.setAdapter(adapter);
+
+            for (int i = 0; i < imgAdapter.getCount(); i++) {
+                new GetThumbnailsThread(uihandler, imgAdapter.getImageContener().get(i)).start();
+            }
+        }
+
+		// Click on thumbnail
+//		gallery.setOnItemClickListener(onThumbClickListener);
+		// Click on search
+
+//		// Get prevoiusly downloaded list after orientation change
+//		imageList = (ArrayList<ImageContener>) getLastNonConfigurationInstance();
+//		if (imageList != null) {
+//			imgAdapter = new ImageAdapter(getApplicationContext(), imageList);
+//			ArrayList<ImageContener> ic = imgAdapter.getImageContener();
+////			gallery.setAdapter(imgAdapter);
+//			imgAdapter.notifyDataSetChanged();
+//			int lastImage = -1;
+//			if (savedInstanceState.containsKey(LAST_IMAGE)) {
+//				lastImage = savedInstanceState.getInt(LAST_IMAGE);
+//			}
+//			if (lastImage >= 0 && ic.size() >= lastImage) {
+////				gallery.setSelection(lastImage);
+//				Bitmap photo = ic.get(lastImage).getPhoto();
+//				if (photo == null) {
+//                    new GetLargePhotoThread(ic.get(lastImage), uihandler).start();
+//                } else {
+////					imgView.setImageBitmap(ic.get(lastImage).photo);
+//                }
+//			}
+//		}
 	}
 
 	/**
@@ -110,10 +126,10 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// Saving index of selected item in Gallery
-//		outState.putInt(LAST_IMAGE, gallery.getSelectedItemPosition());
 		super.onSaveInstanceState(outState);
-	}
+
+        outState.putSerializable(STATE_IMAGES, imageList);
+    }
 
 	/**
 	 * 
@@ -152,7 +168,6 @@ public class MainActivity extends Activity {
 		@Override
 		public void run() {
 			String tag = editText.getText().toString().trim();
-            Log.d("getMetadata", "Tag: " + tag);
             if (tag != null && tag.length() >= 3) {
                 FlickrManager.searchImagesByTag(uihandler, getApplicationContext(), tag);
             }

@@ -1,11 +1,15 @@
 package com.farmers.farmersflickr;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.farmers.farmersflickr.FlickrManager.GetThumbnailsThread;
 import com.farmers.farmersflickr.MainActivity.UIHandler;
 
-public class ImageContener implements IThumb {
+import java.io.Serializable;
+
+public class ImageContener implements IThumb, Serializable, Parcelable {
 	String id;
 	int position;
 	String thumbURL;
@@ -144,5 +148,15 @@ public class ImageContener implements IThumb {
 	public void onSaveThumbURL(UIHandler uih, ImageContener ic) {
 		// TODO Auto-generated method stub
 		new GetThumbnailsThread(uih, ic).start();
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+
 	}
 }

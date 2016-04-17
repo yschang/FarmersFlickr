@@ -27,7 +27,7 @@ public class FlickrManager {
 	private static final String FLICKR_GET_SIZES_STRING = "flickr.photos.getSizes";
 	private static final int FLICKR_PHOTOS_SEARCH_ID = 1;
 	private static final int FLICKR_GET_SIZES_ID = 2;
-	private static final int NUMBER_OF_PHOTOS = 20;
+//	private static final int NUMBER_OF_PHOTOS = 20;
 	
 	//You can set here your API_KEY
 	private static final String APIKEY_SEARCH_STRING = "&api_key=64c0f179f8aec0444033c8b2c57a7db0";
@@ -46,7 +46,7 @@ public class FlickrManager {
 		switch (methodId) {
 		case FLICKR_PHOTOS_SEARCH_ID:
 			method_type = FLICKR_PHOTOS_SEARCH_STRING;
-			url = FLICKR_BASE_URL + method_type + APIKEY_SEARCH_STRING + TAGS_STRING + parameter + FORMAT_STRING + "&per_page="+NUMBER_OF_PHOTOS+"&media=photos";
+			url = FLICKR_BASE_URL + method_type + APIKEY_SEARCH_STRING + TAGS_STRING + parameter + FORMAT_STRING + "&media=photos";
 			break;
 		case FLICKR_GET_SIZES_ID:
 			method_type = FLICKR_GET_SIZES_STRING;
@@ -133,7 +133,6 @@ public class FlickrManager {
 			if (imgContener.thumb != null) {
 				Message msg = Message.obtain(uih, UIHandler.ID_UPDATE_ADAPTER);
 				uih.sendMessage(msg);
-
 			}
 		}
 
