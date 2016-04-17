@@ -1,7 +1,5 @@
 package com.farmers.farmersflickr;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -21,6 +19,8 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 
 import com.farmers.farmersflickr.FlickrManager.GetThumbnailsThread;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
