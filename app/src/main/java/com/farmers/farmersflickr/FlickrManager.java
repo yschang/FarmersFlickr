@@ -20,16 +20,14 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class FlickrManager {
-
 	// String to create Flickr API urls
 	private static final String FLICKR_BASE_URL = "https://api.flickr.com/services/rest/?method=";
 	private static final String FLICKR_PHOTOS_SEARCH_STRING = "flickr.photos.search";
 	private static final String FLICKR_GET_SIZES_STRING = "flickr.photos.getSizes";
 	private static final int FLICKR_PHOTOS_SEARCH_ID = 1;
 	private static final int FLICKR_GET_SIZES_ID = 2;
-//	private static final int NUMBER_OF_PHOTOS = 20;
-	
-	//You can set here your API_KEY
+
+	// API_KEY
 	private static final String APIKEY_SEARCH_STRING = "&api_key=64c0f179f8aec0444033c8b2c57a7db0";
 	
 	private static final String TAGS_STRING = "&tags=";
@@ -43,15 +41,17 @@ public class FlickrManager {
 	private static String createURL(int methodId, String parameter) {
 		String method_type = "";
 		String url = null;
+        parameter = parameter.replaceAll(" ", "%20");
+
 		switch (methodId) {
-		case FLICKR_PHOTOS_SEARCH_ID:
-			method_type = FLICKR_PHOTOS_SEARCH_STRING;
-			url = FLICKR_BASE_URL + method_type + APIKEY_SEARCH_STRING + TAGS_STRING + parameter + FORMAT_STRING + "&media=photos";
-			break;
-		case FLICKR_GET_SIZES_ID:
-			method_type = FLICKR_GET_SIZES_STRING;
-			url = FLICKR_BASE_URL + method_type + PHOTO_ID_STRING + parameter + APIKEY_SEARCH_STRING + FORMAT_STRING;
-			break;
+            case FLICKR_PHOTOS_SEARCH_ID:
+                method_type = FLICKR_PHOTOS_SEARCH_STRING;
+                url = FLICKR_BASE_URL + method_type + APIKEY_SEARCH_STRING + TAGS_STRING + parameter + FORMAT_STRING + "&media=photos";
+                break;
+            case FLICKR_GET_SIZES_ID:
+                method_type = FLICKR_GET_SIZES_STRING;
+                url = FLICKR_BASE_URL + method_type + PHOTO_ID_STRING + parameter + APIKEY_SEARCH_STRING + FORMAT_STRING;
+                break;
 		}
 		return url;
 	}
@@ -117,6 +117,9 @@ public class FlickrManager {
 		return bm;
 	}
 
+    /*
+     * Thread that displays list of images in thumbnail layout
+     */
 	public static class GetThumbnailsThread extends Thread {
 		UIHandler uih;
 		ImageContener imgContener;
@@ -128,7 +131,6 @@ public class FlickrManager {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			imgContener.thumb = getThumbnail(imgContener);
 			if (imgContener.thumb != null) {
 				Message msg = Message.obtain(uih, UIHandler.ID_UPDATE_ADAPTER);
@@ -140,9 +142,7 @@ public class FlickrManager {
 
 	public static ArrayList<ImageContener> searchImagesByTag(UIHandler uih, Context ctx, String tag) {
 		uihandler = uih;
-		Log.d("searchImagesByTag", "Tag: " + tag);
 		String url = createURL(FLICKR_PHOTOS_SEARCH_ID, tag);
-		Log.d("searchImagesByTag", "url: " + url);
 		ArrayList<ImageContener> tmp = new ArrayList<ImageContener>();
 		String jsonString = null;
 		try {
@@ -165,7 +165,6 @@ public class FlickrManager {
 				msg.obj = tmp;
 				uih.sendMessage(msg);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (NullPointerException nue) {

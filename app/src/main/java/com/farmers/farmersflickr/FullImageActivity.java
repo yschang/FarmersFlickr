@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+/*
+ * Display image in one screen after clicking an image from thumbnail layout
+ */
 public class FullImageActivity extends Activity {
 
     private ImageView imageView;

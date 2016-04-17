@@ -25,8 +25,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Using LazyList via https://github.com/thest1/LazyList/tree/master/src/com/fedorvlasov/lazylist
- * for the example since its super lightweight
- * I barely modified this file
+ * for the example since its super lightweight. I barely modified this file
  */
 public class ImageLoader {
 
@@ -38,16 +37,14 @@ public class ImageLoader {
 
     public ImageLoader(Context context){
         fileCache = new FileCache(context);
-        executorService=Executors.newFixedThreadPool(5);
+        executorService = Executors.newFixedThreadPool(5);
     }
-
-//    final int stub_id= android.R.drawable.alert_dark_frame;
 
     public void DisplayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
-        Bitmap bitmap=memoryCache.get(url);
-        if(bitmap!=null)
+        Bitmap bitmap = memoryCache.get(url);
+        if(bitmap != null)
             imageView.setImageBitmap(bitmap);
         else
         {
@@ -66,15 +63,13 @@ public class ImageLoader {
     {
         File f = fileCache.getFile(url);
 
-        Log.d("getBitMap", url);
-
-        //from SD cache
+        // from SD cache
         Bitmap b = decodeFile(f);
         if(b != null) {
             return b;
         }
 
-        //from web
+        // from web
         try {
             Bitmap bitmap = null;
             URL imageUrl = new URL(url);
@@ -97,23 +92,27 @@ public class ImageLoader {
         }
     }
 
-    //decodes image and scales it to reduce memory consumption
+    /*
+     * Decodes image and scales it to reduce memory consumption
+     */
     private Bitmap decodeFile(File f){
         try {
-            //decode image size
+            // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             FileInputStream stream1 = new FileInputStream(f);
             BitmapFactory.decodeStream(stream1,null,o);
             stream1.close();
 
-            //Find the correct scale value. It should be the power of 2.
+            // Find the correct scale value. It should be the power of 2.
             final int REQUIRED_SIZE = 70;
-            int width_tmp = o.outWidth, height_tmp=o.outHeight;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
             int scale = 1;
-            while(true){
-                if(width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+            while (true){
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
                     break;
+                }
+
                 width_tmp /= 2;
                 height_tmp /= 2;
                 scale *= 2;
@@ -123,7 +122,7 @@ public class ImageLoader {
                 scale /= 2;
             }
 
-            //decode with inSampleSize
+            // Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize=scale;
             FileInputStream stream2=new FileInputStream(f);
@@ -138,7 +137,7 @@ public class ImageLoader {
         return null;
     }
 
-    //Task for the queue
+    // Task for the queue
     private class PhotoToLoad
     {
         public String url;
@@ -178,7 +177,7 @@ public class ImageLoader {
         return tag == null || !tag.equals(photoToLoad.url);
     }
 
-    //Used to display bitmap in the UI thread
+    // Used to display bitmap in the UI thread
     class BitmapDisplayer implements Runnable
     {
         Bitmap bitmap;

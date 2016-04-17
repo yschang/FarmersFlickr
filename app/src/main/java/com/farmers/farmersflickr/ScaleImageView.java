@@ -101,7 +101,7 @@ public class ScaleImageView extends ImageView {
                 int ih = this.getDrawable().getIntrinsicHeight();
                 int heightC = width*ih/iw;
                 if(height > 0)
-                    if(heightC>height){
+                    if(heightC > height){
                         // dont let hegiht be greater then set max
                         heightC = height;
                         width = heightC*iw/ih;
@@ -113,18 +113,18 @@ public class ScaleImageView extends ImageView {
             }else{
                 // need to scale to height instead
                 int marg = 0;
-                if(getParent()!=null){
-                    if(getParent().getParent()!=null){
-                        marg+= ((RelativeLayout) getParent().getParent()).getPaddingTop();
-                        marg+= ((RelativeLayout) getParent().getParent()).getPaddingBottom();
+                if(getParent() != null){
+                    if(getParent().getParent() != null){
+                        marg += ((RelativeLayout) getParent().getParent()).getPaddingTop();
+                        marg += ((RelativeLayout) getParent().getParent()).getPaddingBottom();
                     }
                 }
 
                 int iw = this.getDrawable().getIntrinsicWidth();
                 int ih = this.getDrawable().getIntrinsicHeight();
 
-                width = height*iw/ih;
-                height-=marg;
+                width = height * iw / ih;
+                height -= marg;
                 setMeasuredDimension(width, height);
             }
 
