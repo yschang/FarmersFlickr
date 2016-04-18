@@ -15,6 +15,6 @@ https://github.com/maurycyw/StaggeredGridViewDemo
 
 
 ### Issues
-- Blurry Images in full screen.
-- String search -> Empty string search -> Empty string search (Clicking on Search button twice is needed to display empty Grid view).
-- String search -> Empty string search -> orientation change -> Empty string search -> list of images from previous search shows up instead of empty grid view.
+- Images become blurry when they are expanded.
+- String search -> Empty string search -> Empty string search (Clicking on Search button twice is needed in order to display the empty Grid view).
+- String search -> Empty string search -> Empty string search -> orientation change -> Empty string search -> list of images from previous search shows up instead of the empty grid view.
